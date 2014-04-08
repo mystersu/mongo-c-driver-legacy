@@ -43,7 +43,7 @@ int mongo_env_write_socket( mongo *conn, const void *buf, size_t len ) {
     int flags = 0;
 
     while ( len ) {
-        size_t sent = send( conn->sock, cbuf, len, flags );
+        ssize_t sent = send( conn->sock, cbuf, len, flags );
         if ( sent == -1 ) {
             __mongo_set_error( conn, MONGO_IO_ERROR, NULL, WSAGetLastError() );
             conn->connected = 0;
@@ -60,7 +60,7 @@ int mongo_env_read_socket( mongo *conn, void *buf, size_t len ) {
     char *cbuf = (char*)buf;
 
     while ( len ) {
-        size_t sent = recv( conn->sock, cbuf, len, 0 );
+        ssize_t sent = recv( conn->sock, cbuf, len, 0 );
         if ( sent == 0 || sent == -1 ) {
             __mongo_set_error( conn, MONGO_IO_ERROR, NULL, WSAGetLastError() );
             return MONGO_ERROR;
@@ -234,7 +234,7 @@ int mongo_env_write_socket( mongo *conn, const void *buf, size_t len ) {
 #endif
 
     while ( len ) {
-        size_t sent = send( conn->sock, cbuf, len, flags );
+        ssize_t sent = send( conn->sock, cbuf, len, flags );
         if ( sent == -1 ) {
             if (errno == EPIPE)
                 conn->connected = 0;
@@ -251,7 +251,7 @@ int mongo_env_write_socket( mongo *conn, const void *buf, size_t len ) {
 int mongo_env_read_socket( mongo *conn, void *buf, size_t len ) {
     char *cbuf = buf;
     while ( len ) {
-        size_t sent = recv( conn->sock, cbuf, len, 0 );
+        ssize_t sent = recv( conn->sock, cbuf, len, 0 );
         if ( sent == 0 || sent == -1 ) {
             __mongo_set_error( conn, MONGO_IO_ERROR, strerror( errno ), errno );
             return MONGO_ERROR;
